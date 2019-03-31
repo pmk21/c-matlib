@@ -29,5 +29,8 @@ void matrix_T(Matrix *matrix);
 /* Matrix Addition */
 Matrix* matrix_add(Matrix *matrixA, Matrix *matrixB);
 
+/* Matrix Subtraction */
+Matrix* matrix_sub(Matrix *matrixA, Matrix *matrixB);
+
 /* Scalar multiplication */
 void matrix_smul(Matrix *matrix, double scalar);

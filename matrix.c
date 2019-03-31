@@ -129,11 +129,12 @@ Matrix* matrix_add(Matrix *matrixA, Matrix *matrixB)
     /* Checks if the matrices are of the same order */
     if ( (matrixA->rows != matrixB->rows) || (matrixA->cols != matrixB->cols) ) 
     {
-        printf("Warning: Orders of matrices do not match\n");
+        printf("Warning: Orders of matrices do not match returning NULL!\n");
         return NULL;
     }
     else
     {
+        /* Performs matrix addition */
         Matrix *matrixC = (Matrix *)malloc(sizeof(Matrix));
         matrixC->rows = matrixA->rows;
         matrixC->cols = matrixA->cols;
@@ -147,6 +148,37 @@ Matrix* matrix_add(Matrix *matrixA, Matrix *matrixB)
             for (int j=0;j<matrixC->cols;j++)
             {
                 matrixC->data[i][j] = matrixA->data[i][j] + matrixB->data[i][j]; 
+            }
+        }
+
+        return matrixC;
+    }
+}
+
+Matrix* matrix_sub(Matrix *matrixA, Matrix *matrixB)
+{
+    /* Checks if the matrices are of the same order */
+    if ( (matrixA->rows != matrixB->rows) || (matrixA->cols != matrixB->cols) ) 
+    {
+        printf("Warning: Orders of matrices do not match returning NULL!\n");
+        return NULL;
+    }
+    else
+    {   
+        /* Performs matrixA - matrixB */
+        Matrix *matrixC = (Matrix *)malloc(sizeof(Matrix));
+        matrixC->rows = matrixA->rows;
+        matrixC->cols = matrixA->cols;
+
+        matrixC->data = (double **)malloc(sizeof(double *) * matrixC->rows);
+        
+        for (int i=0;i<matrixC->rows;i++)
+        {
+            matrixC->data[i] = (double *)malloc(sizeof(double) * matrixC->cols);
+            
+            for (int j=0;j<matrixC->cols;j++)
+            {
+                matrixC->data[i][j] = matrixA->data[i][j] - matrixB->data[i][j]; 
             }
         }
 
