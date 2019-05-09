@@ -105,6 +105,31 @@ Matrix* matrix_clone(Matrix *matrix)
     return mat;
 }
 
+Matrix* matrix_create(int row, int col)
+{
+    Matrix *matrix;
+    
+    /* Allocate space for the matrix structure */
+    matrix = (Matrix *)malloc(sizeof(Matrix));
+
+    /* Initialize all the values */
+    matrix->rows = row;
+    matrix->cols = col;
+
+    matrix->data = (double **)malloc(sizeof(double *) * row);
+
+    for (int i=0;i<row;i++)
+    {
+        matrix->data[i] = (double *)malloc(sizeof(double) * col);
+
+        for (int j=0;j<col;j++)
+        {
+            matrix->data[i][j] = 0;
+        }
+    }
+    return matrix;
+}
+
 void matrix_T(Matrix *matrix)
 {
 
@@ -236,6 +261,8 @@ int matrix_det(Matrix *matrix)
     }
     else
     {
+        //TODO: Test this function more
+        
         Matrix *mat;
         mat = matrix_clone(matrix);
         int swaps = 0;
@@ -308,4 +335,55 @@ void swap_row(Matrix* matrix, int i, int j)
         matrix->data[i][k] = matrix->data[j][k];
         matrix->data[j][k] = temp;
     } 
+}
+
+void matrix_LU(Matrix *matrix, Matrix **l, Matrix **u)
+{
+    // TODO: Add conditions for checking whether LU decomposition exists
+    // TODO: Implement LU decomposition for rectangular matrices
+
+    if (matrix->rows != matrix->cols)
+    {
+        printf("ERROR: LU Decomposition for rectangular matrices not implemented\n");
+        return;
+    }
+
+    Matrix *L = matrix_create(matrix->rows, matrix->rows);
+    Matrix *U = matrix_create(matrix->rows, matrix->rows);
+
+    for (int i = 0; i < matrix->rows; i++)
+    {
+        // Upper Triangular
+        for (int k = i; k < matrix->rows; k++)
+        { 
+            // Summation of L(i, j) * U(j, k) 
+            int sum = 0; 
+            for (int j = 0; j < i; j++) 
+                sum += (L->data[i][j] * U->data[j][k]); 
+  
+            // Evaluating U(i, k) 
+            U->data[i][k] = matrix->data[i][k] - sum; 
+        }
+  
+        // Lower Triangular 
+        for (int k = i; k < matrix->rows; k++) 
+        {
+            
+            if (i == k)
+                L->data[i][i] = 1; // Diagonal as 1
+            else 
+            {
+                // Summation of L(k, j) * U(j, i)
+                int sum = 0;
+                for (int j = 0; j < i; j++)
+                    sum += (L->data[k][j] * U->data[j][i]);
+  
+                // Evaluating L(k, i)
+                L->data[k][i] = (matrix->data[k][i] - sum) / U->data[i][i];
+            }
+        }
+    }
+
+    *l = L;
+    *u = U;
 }

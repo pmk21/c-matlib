@@ -1,4 +1,4 @@
-# A Simple Matrix Library Implementation in C
+# Matrix Library in C
 
 * `matrix.h` contains function prototypes.
 * `matrix.c` contains definition of the functions.
