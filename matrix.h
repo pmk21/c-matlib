@@ -21,6 +21,9 @@ void matrix_free(Matrix *matrix);
 /* Print the matrix */
 void matrix_print(Matrix *matrix);
 
+/* Create a copy of the matrix */
+Matrix* matrix_clone(Matrix *matrix);
+
 // Basic operations
 
 /* Transposes the matrix */
@@ -34,3 +37,12 @@ Matrix* matrix_sub(Matrix *matrixA, Matrix *matrixB);
 
 /* Scalar multiplication */
 void matrix_smul(Matrix *matrix, double scalar);
+
+/* Find determinant */
+int matrix_det(Matrix *matrix);
+
+/* Swap two rows */
+void swap_row(Matrix* matrix, int i, int j);
+
+/* Reduce row i by factor times row j */
+void reduce(Matrix* matrix, int i, int j, double factor);

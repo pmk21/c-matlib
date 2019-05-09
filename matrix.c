@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "matrix.h"
 
 Matrix* matrix_init()
@@ -50,6 +51,7 @@ void matrix_free(Matrix *matrix)
         free(matrix->data[i]);
     }
     free(matrix->data);
+    free(matrix);
 }
 
 void matrix_print(Matrix *matrix)
@@ -73,6 +75,34 @@ void matrix_print(Matrix *matrix)
         }
         printf("\n");
     }
+}
+
+Matrix* matrix_clone(Matrix *matrix)
+{
+    Matrix *mat;
+    int rows = matrix->rows,
+        cols = matrix->cols;
+
+    /* Allocate space for the matrix structure */
+    mat = (Matrix *)malloc(sizeof(Matrix));
+
+    /* Initialize all the values */
+    mat->rows = rows;
+    mat->cols = cols;
+
+    mat->data = (double **)malloc(sizeof(double *) * rows);
+
+    for (int i=0;i<rows;i++)
+    {
+        mat->data[i] = (double *)malloc(sizeof(double) * cols);
+
+        for (int j=0;j<cols;j++)
+        {
+            mat->data[i][j] = matrix->data[i][j];    
+        }
+    }
+
+    return mat;
 }
 
 void matrix_T(Matrix *matrix)
@@ -196,4 +226,86 @@ void matrix_smul(Matrix *matrix, double scalar)
             matrix->data[i][j] = scalar * matrix->data[i][j];
         }
     }
+}
+
+int matrix_det(Matrix *matrix)
+{
+    if (matrix->cols != matrix->rows)
+    {    
+        printf("Warning: Determinant exists only for square matrices!");
+    }
+    else
+    {
+        Matrix *mat;
+        mat = matrix_clone(matrix);
+        int swaps = 0;
+        double det = 1.0, factor;
+
+        for (int i=0;i<mat->rows;i++)
+        {
+            if (mat->data[i][i] == 0)
+            {
+                int k;
+                for (k=i+1;k<mat->rows;k++)
+                {
+                    if (mat->data[k][i])
+                        break;
+                }
+
+                if (k != mat->rows)
+                {   
+                    swap_row(mat, k, i);
+                    swaps++;
+                }
+            }
+            
+            for (int j=i+1;j<mat->rows;j++)
+            {
+                if (mat->data[i][i] == 0)
+                    continue;
+                
+                factor = mat->data[j][i]/mat->data[i][i];
+                
+                if (factor == 0)
+                    continue;
+                
+                reduce(mat, i, j, factor);
+            }
+
+            matrix_print(mat);
+        }
+
+        for (int i=0;i<mat->rows;i++)
+        {
+            det = det * mat->data[i][i];
+        }
+
+        matrix_free(mat);
+
+        return det * pow(-1, swaps);
+    }
+    
+}
+
+void reduce(Matrix* matrix, int i, int j, double factor)
+{
+    if (matrix->rows < i || matrix->rows < j)
+        return;
+    
+    for (int k=0;k<matrix->cols;k++)
+    {
+        matrix->data[j][k] -= factor * matrix->data[i][k];
+    }
+}
+
+void swap_row(Matrix* matrix, int i, int j)
+{
+    double temp = 0.0;
+
+    for (int k=0; k<matrix->rows; k++) 
+    { 
+        temp = matrix->data[i][k];
+        matrix->data[i][k] = matrix->data[j][k];
+        matrix->data[j][k] = temp;
+    } 
 }
