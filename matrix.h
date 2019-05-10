@@ -41,6 +41,13 @@ Matrix* matrix_sub(Matrix *matrixA, Matrix *matrixB);
 /* Scalar multiplication */
 void matrix_smul(Matrix *matrix, double scalar);
 
+/* Strassen's Multiplication */
+Matrix* matrix_mul_strassens(Matrix *matrixA, Matrix *matrixB, int n);
+
+/*Matrix Multiplication*/
+Matrix* matrix_mul(Matrix *matrixA, Matrix *matrixB);
+
+
 /* Find determinant */
 int matrix_det(Matrix *matrix);
 
